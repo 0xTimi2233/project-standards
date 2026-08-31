@@ -6,7 +6,6 @@
 
 - [.gitmessage](/Users/sony/templates/project-standards/.gitmessage:1)：Git 提交规范模板
 - [.github/](/Users/sony/templates/project-standards/.github:1)：GitHub 协作基线，包含缺陷报告、功能支持表单、拉取请求模板与标准标签定义
-- [.editorconfig](/Users/sony/templates/project-standards/.editorconfig:1)：统一代码格式化基线的通用编辑器配置
 
 ## 规范清单与接入指南
 
@@ -56,8 +55,3 @@ git config --global commit.template ~/templates/project-standards/.gitmessage
 just sync-labels <owner/repo>
 ```
 
-### 4. 通用编辑器格式配置
-
-文件路径：[.editorconfig](/Users/sony/templates/project-standards/.editorconfig:1)
-
-为各类编辑器和 IDE 提供统一的字符集、缩进风格、换行符及行尾空白清理基线。初始化新项目时直接复制至项目根目录生效。
