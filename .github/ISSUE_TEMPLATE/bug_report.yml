@@ -1,6 +1,6 @@
-name: 缺陷报告
+name: Bug Report
 description: 提交系统缺陷、异常崩溃或不符合预期的行为
-title: "fix: "
+title: "Bug Report: "
 labels: ["type/bug"]
 body:
   - type: input

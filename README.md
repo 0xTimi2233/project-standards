@@ -29,6 +29,7 @@ git config --global commit.template ~/templates/project-standards/.gitmessage
 
 ### 2. GitHub 协作模板
 
+- 表单全局配置：[config.yml](/Users/sony/templates/project-standards/.github/ISSUE_TEMPLATE/config.yml:1)，统一禁用空白 Issue 自由提交
 - 缺陷报告表单：[bug_report.yml](/Users/sony/templates/project-standards/.github/ISSUE_TEMPLATE/bug_report.yml:1)
 - 功能支持表单：[feature_support.yml](/Users/sony/templates/project-standards/.github/ISSUE_TEMPLATE/feature_support.yml:1)
 - 合并请求模板：[PULL_REQUEST_TEMPLATE.md](/Users/sony/templates/project-standards/.github/PULL_REQUEST_TEMPLATE.md:1)

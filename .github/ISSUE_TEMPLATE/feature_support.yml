@@ -1,6 +1,6 @@
-name: 功能支持
+name: Feature Support
 description: 提出新增能力诉求、演进建议或架构增强方案
-title: "feat: "
+title: "Feature Support: "
 labels: ["type/feat"]
 body:
   - type: textarea
