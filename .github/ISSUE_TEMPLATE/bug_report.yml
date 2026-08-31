@@ -25,13 +25,11 @@ body:
     validations:
       required: true
   - type: textarea
-    id: behavior
+    id: expected-behavior
     attributes:
-      label: 现象对比
-      description: 明确阐述实际发生的结果以及理应出现的正确预期。
-      placeholder: |
-        实际行为：
-        预期行为：
+      label: 预期行为
+      description: 阐明在执行上述步骤后，系统理应呈现的正确预期或行为表现。
+      placeholder: 请在此描述你期望看到的正常结果或正确输出。
     validations:
       required: true
   - type: textarea

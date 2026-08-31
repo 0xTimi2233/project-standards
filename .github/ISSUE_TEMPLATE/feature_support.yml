@@ -19,8 +19,3 @@ body:
       placeholder: 请描述该功能应当如何运作，包含预期的调用方式或输出样式。
     validations:
       required: true
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: 替代方案与上下文
-      description: 是否有临时规避手段或考量过的其他选型方案。
