@@ -12,7 +12,7 @@
   {
     "name": "status/ready-for-agent",
     "color": "0e8a16",
-    "description": "上下文与验收标准明确，智能体可直接领跑实现"
+    "description": "上下文与验收标准明确，智能体可直接领取实现"
   },
   {
     "name": "status/needs-human",
