@@ -4,6 +4,7 @@
 
 ## 目录与文件结构
 
+- [.gitignore](/Users/sony/templates/project-standards/.gitignore:1)：跨语言通用忽略规则
 - [.gitmessage](/Users/sony/templates/project-standards/.gitmessage:1)：Git 提交规范模板
 - [.github/](/Users/sony/templates/project-standards/.github:1)：GitHub 协作基线，包含缺陷报告、功能支持表单、拉取请求模板与标准标签定义
 
@@ -18,16 +19,16 @@
 执行如下命令将该模板绑定为本机全局提交模板：
 
 ```bash
-just apply-git-template
-```
-
-或使用原生 Git 命令配置：
-
-```bash
 git config --global commit.template ~/templates/project-standards/.gitmessage
 ```
 
-### 2. GitHub 协作模板
+### 2. 通用忽略规则
+
+文件路径：[.gitignore](/Users/sony/templates/project-standards/.gitignore:1)
+
+覆盖构建产物、覆盖率报告、日志与本地环境变量文件。新项目初始化时直接复制到项目根目录。
+
+### 3. GitHub 协作模板
 
 - 表单全局配置：[config.yml](/Users/sony/templates/project-standards/.github/ISSUE_TEMPLATE/config.yml:1)，统一禁用空白 Issue 自由提交
 - 缺陷报告表单：[bug_report.yml](/Users/sony/templates/project-standards/.github/ISSUE_TEMPLATE/bug_report.yml:1)
@@ -36,7 +37,7 @@ git config --global commit.template ~/templates/project-standards/.gitmessage
 
 在新项目初始化或规范化现有项目时，直接将本仓库的 `.github/` 目录复制至目标项目根目录即可。
 
-### 3. 标准标签集合
+### 4. 标准标签集合
 
 定义文件：[labels.json](/Users/sony/templates/project-standards/.github/labels.json:1)
 

@@ -1,10 +1,6 @@
 default:
     @just --list
 
-# 配置本机全局 Git 提交模板
-apply-git-template:
-    git config --global commit.template {{justfile_directory()}}/.gitmessage
-
 # 批量同步标准标签到指定的 GitHub 仓库，用法如 just sync-labels 0xTimi2233/target-repo
 sync-labels repo:
     #!/usr/bin/env bash
