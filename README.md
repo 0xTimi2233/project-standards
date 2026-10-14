@@ -53,4 +53,14 @@ just -f ~/templates/project-standards/Justfile --list
 ### 通用忽略规则
 
 定义文件：[.gitignore](.gitignore)  
-覆盖构建产物、覆盖率报告、日志与本地环境变量文件，初始化时向目标项目幂等增量合并。
+定义系统缓存、IDE 配置、依赖目录与构建产物忽略项，初始化时幂等增量合并。
+
+### 依赖自动化配置
+
+定义文件：[renovate.json](renovate.json)  
+统一声明 Mend Renovate 配置基线，内置上海时区、语义化提交与安全自动合并规则。
+
+### 远端仓库属性规范
+
+提供 `sync-settings` 命令，同步开启平台原生自动合并与分支自动回收。
+
