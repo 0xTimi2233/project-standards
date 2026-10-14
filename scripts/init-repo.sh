@@ -67,4 +67,10 @@ else
     rm -f "$TEMP_FILE"
 fi
 
+# 4. 同步 renovate.json
+if [ ! -f "$TARGET_DIR/renovate.json" ]; then
+    echo "  -> 复制 renovate.json ..."
+    cp "$ROOT_DIR/renovate.json" "$TARGET_DIR/renovate.json"
+fi
+
 echo "✓ 本地规范基线初始化完成: $TARGET_DIR"

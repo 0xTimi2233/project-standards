@@ -13,8 +13,13 @@ sync-labels repo:
 sync-ruleset repo:
     @bash {{justfile_directory()}}/scripts/sync-ruleset.sh "{{repo}}"
 
-# 同步指定 GitHub 仓库的全部远端配置（标签 + 分支保护规则集），用法：just sync-github 0xTimi2233/target-repo
+# 同步仓库属性配置（启用自动合并、合并后删除分支），用法：just sync-settings 0xTimi2233/target-repo
+sync-settings repo:
+    @bash {{justfile_directory()}}/scripts/sync-settings.sh "{{repo}}"
+
+# 同步指定 GitHub 仓库的全部远端配置（仓库属性 + 标签 + 分支保护规则集），用法：just sync-github 0xTimi2233/target-repo
 sync-github repo:
+    @just sync-settings "{{repo}}"
     @just sync-labels "{{repo}}"
     @just sync-ruleset "{{repo}}"
 
