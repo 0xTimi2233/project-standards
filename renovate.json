@@ -8,19 +8,13 @@
   "platformAutomerge": true,
   "packageRules": [
     {
-      "description": "Auto-merge non-major updates (minor, patch, lockfile)",
-      "matchUpdateTypes": ["minor", "patch", "lockFileMaintenance"],
-      "groupName": "all non-major ({{manager}})",
+      "description": "Auto-merge all non-major and digest updates",
+      "matchUpdateTypes": ["minor", "patch", "digest", "lockFileMaintenance"],
+      "groupName": "all non-major dependencies",
       "automerge": true
     },
     {
-      "description": "Group digest updates and require human review",
-      "matchUpdateTypes": ["digest"],
-      "groupName": "all digests ({{manager}})"
-    },
-    {
-      "description": "Separate PRs for major GitHub Action updates",
-      "matchManagers": ["github-actions"],
+      "description": "Separate PRs for major updates",
       "matchUpdateTypes": ["major"]
     }
   ]
