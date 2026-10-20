@@ -33,3 +33,7 @@ logs/
 
 # Tools and Local Indexes
 .codegraph/
+
+# --- Standard Baseline Ignore Rules ---
+bun.lockb
+*.tsbuildinfo
