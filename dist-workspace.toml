@@ -4,7 +4,7 @@ members = ["dist:."]
 [package]
 name = "standards"
 description = "跨语言、跨技术栈通用的工程元数据规范与基线配置工具"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 repository = "https://github.com/0xTimi2233/project-standards"
 binaries = ["standards"]
