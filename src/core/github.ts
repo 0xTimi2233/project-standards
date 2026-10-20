@@ -14,8 +14,9 @@ export async function syncSettings(repo: string, visibility?: Visibility): Promi
 
   try {
     await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge ${discussionsFlag}`.quiet()
+    await $`gh api --method PUT repos/${repo}/actions/permissions/workflow -F default_workflow_permissions=write -F can_approve_pull_request_reviews=true`.quiet()
     log(
-      `[settings] auto-merge=true delete-branch-on-merge=true discussions=${effectiveVisibility === 'public'}`,
+      `[settings] auto-merge=true delete-branch-on-merge=true discussions=${effectiveVisibility === 'public'} workflow-pr-creation=true`,
     )
   } catch (error) {
     throw new Error(
