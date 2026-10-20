@@ -8,9 +8,13 @@
   },
   "scripts": {
     "typecheck": "bun check",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "bun run typecheck && biome check .",
     "test": "bun test"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
     "@types/bun": "latest"
   },
   "peerDependencies": {

@@ -1,13 +1,17 @@
 import { existsSync, statSync } from "node:fs";
-import { cp, copyFile, mkdir } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import { ROOT_DIR, loadManifest } from "../config.ts";
+import { copyFile, cp, mkdir } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { loadManifest, ROOT_DIR } from "@/config.ts";
+import { mergeGitignore } from "@/core/gitignore.ts";
 
 export interface InitOptions {
   silent?: boolean;
 }
 
-export async function initLocalBaseline(targetPath: string, options: InitOptions = {}): Promise<void> {
+export async function initLocalBaseline(
+  targetPath: string,
+  options: InitOptions = {},
+): Promise<void> {
   const targetDir = resolve(process.cwd(), targetPath);
   if (!existsSync(targetDir) || !statSync(targetDir).isDirectory()) {
     throw new Error(`invalid target directory: ${targetDir}`);
@@ -58,7 +62,6 @@ export async function initLocalBaseline(targetPath: string, options: InitOptions
         break;
       }
       case "merge-lines": {
-        const { mergeGitignore } = await import("./gitignore.ts");
         const res = await mergeGitignore(srcPath, destPath);
         if (res.created) {
           log(`[copy] ${entry.dest}`);

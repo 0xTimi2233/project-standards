@@ -1,8 +1,8 @@
 import { existsSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { $ } from "bun";
-import { ROOT_DIR } from "../config.ts";
-import type { LabelDefinition, RulesetDefinition } from "../types.ts";
+import { ROOT_DIR } from "@/config.ts";
+import type { LabelDefinition, RulesetDefinition } from "@/types.ts";
 
 export async function syncSettings(repo: string): Promise<void> {
   log(`[settings] sync repo: ${repo}`);
@@ -10,7 +10,9 @@ export async function syncSettings(repo: string): Promise<void> {
     await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge`.quiet();
     log(`[settings] auto-merge=true delete-branch-on-merge=true`);
   } catch (error) {
-    throw new Error(`failed to sync repository settings (${repo}): ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `failed to sync repository settings (${repo}): ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -30,7 +32,9 @@ export async function syncLabels(repo: string): Promise<void> {
     const output = await $`gh label list --repo ${repo} --json name`.text();
     remoteLabels = JSON.parse(output.trim() || "[]");
   } catch (error) {
-    throw new Error(`failed to fetch labels (${repo}): ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `failed to fetch labels (${repo}): ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   for (const remote of remoteLabels) {
@@ -60,14 +64,20 @@ export async function syncRuleset(repo: string): Promise<void> {
     responseText = res.stdout.toString() + res.stderr.toString();
     if (res.exitCode !== 0) {
       if (responseText.includes("Upgrade to GitHub Pro")) {
-        log(`[ruleset] skipped (github free private repo does not support rulesets)`);
+        log(
+          `[ruleset] skipped (github free private repo does not support rulesets)`,
+        );
         return;
       }
-      throw new Error(`failed to query rulesets (exit code ${res.exitCode}): ${responseText.trim()}`);
+      throw new Error(
+        `failed to query rulesets (exit code ${res.exitCode}): ${responseText.trim()}`,
+      );
     }
   } catch (error) {
     if (String(error).includes("Upgrade to GitHub Pro")) {
-      log(`[ruleset] skipped (github free private repo does not support rulesets)`);
+      log(
+        `[ruleset] skipped (github free private repo does not support rulesets)`,
+      );
       return;
     }
     throw error;
@@ -80,7 +90,9 @@ export async function syncRuleset(repo: string): Promise<void> {
     rulesets = [];
   }
 
-  const existing = rulesets.find((item) => item.name === "default-branch-protection");
+  const existing = rulesets.find(
+    (item) => item.name === "default-branch-protection",
+  );
 
   if (existing?.id) {
     await $`gh api --method PUT repos/${repo}/rulesets/${existing.id} --input ${rulesetPath}`.quiet();
@@ -98,7 +110,9 @@ export async function syncGitHub(repo: string): Promise<void> {
   log(`[done] github remote synchronized`);
 }
 
-export async function resolveRepoSlug(targetPath: string): Promise<string | null> {
+export async function resolveRepoSlug(
+  targetPath: string,
+): Promise<string | null> {
   const targetDir = resolve(process.cwd(), targetPath);
   const gitDir = resolve(targetDir, ".git");
 
@@ -107,11 +121,13 @@ export async function resolveRepoSlug(targetPath: string): Promise<string | null
   }
 
   try {
-    const remoteUrl = (await $`git -C ${targetDir} config --get remote.origin.url`.text()).trim();
+    const remoteUrl = (
+      await $`git -C ${targetDir} config --get remote.origin.url`.text()
+    ).trim();
     if (!remoteUrl) return null;
 
     const match = remoteUrl.match(/github\.com[:/]([^/]+\/[^/.]+)(?:\.git)?$/);
-    return match ? match[1] ?? null : null;
+    return match ? (match[1] ?? null) : null;
   } catch {
     return null;
   }

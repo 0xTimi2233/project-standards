@@ -1,6 +1,6 @@
-import { resolve, dirname } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Manifest } from "./types.ts";
+import type { Manifest } from "@/types.ts";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = resolve(currentDir, "..");

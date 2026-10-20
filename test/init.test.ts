@@ -1,9 +1,9 @@
-import { describe, expect, it, afterEach } from "bun:test";
-import { mkdtemp, rm, readFile, writeFile } from "node:fs/promises";
+import { afterEach, describe, expect, it } from "bun:test";
+import { existsSync } from "node:fs";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { existsSync } from "node:fs";
-import { initLocalBaseline } from "../src/core/init.ts";
+import { initLocalBaseline } from "@/core/init.ts";
 
 describe("initLocalBaseline", () => {
   let tempDir: string | null = null;
@@ -22,7 +22,12 @@ describe("initLocalBaseline", () => {
     expect(existsSync(join(tempDir, ".gitmessage"))).toBe(true);
     expect(existsSync(join(tempDir, ".github/labels.json"))).toBe(true);
     expect(existsSync(join(tempDir, ".github/ruleset.json"))).toBe(true);
-    expect(existsSync(join(tempDir, ".github/PULL_REQUEST_TEMPLATE.md"))).toBe(true);
+    expect(
+      existsSync(join(tempDir, ".github/ISSUE_TEMPLATE/feature_request.yaml")),
+    ).toBe(true);
+    expect(existsSync(join(tempDir, ".github/PULL_REQUEST_TEMPLATE.md"))).toBe(
+      true,
+    );
     expect(existsSync(join(tempDir, "renovate.json"))).toBe(true);
     expect(existsSync(join(tempDir, "CONTRIBUTING.md"))).toBe(true);
     expect(existsSync(join(tempDir, "SECURITY.md"))).toBe(true);

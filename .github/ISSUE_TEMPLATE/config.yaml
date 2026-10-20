@@ -1,1 +1,5 @@
 blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/0xTimi2233/project-standards/discussions
+    about: 提问咨询、使用困惑、最佳实践探讨与非缺陷/需求的开放式交流，请前往 Discussions 发起讨论。
