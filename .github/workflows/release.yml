@@ -10,20 +10,22 @@ permissions:
 
 jobs:
   build-and-release:
-    name: 构建跨平台二进制并发布 Release
+    name: 编译跨平台独立二进制并发布 Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: 设置 Bun 运行时
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: latest
 
       - name: 安装项目依赖
         run: bun install --frozen-lockfile
 
-      - name: 编译跨平台独立二进制
+      - name: 编译跨平台原生独立二进制
         run: |
           mkdir -p dist
           bun build --compile --minify --target=bun-linux-x64 ./bin/standards.ts --outfile dist/standards-linux-x64
@@ -32,8 +34,8 @@ jobs:
           bun build --compile --minify --target=bun-darwin-x64 ./bin/standards.ts --outfile dist/standards-darwin-x64
           bun build --compile --minify --target=bun-windows-x64 ./bin/standards.ts --outfile dist/standards-windows-x64.exe
 
-      - name: 发布 GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: 自动发布 GitHub Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: dist/*
           generate_release_notes: true

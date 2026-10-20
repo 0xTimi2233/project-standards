@@ -23,7 +23,7 @@ describe("initLocalBaseline", () => {
     expect(existsSync(join(tempDir, ".github/labels.json"))).toBe(true);
     expect(existsSync(join(tempDir, ".github/ruleset.json"))).toBe(true);
     expect(
-      existsSync(join(tempDir, ".github/ISSUE_TEMPLATE/feature_request.yaml")),
+      existsSync(join(tempDir, ".github/ISSUE_TEMPLATE/feature_request.yml")),
     ).toBe(true);
     expect(existsSync(join(tempDir, ".github/PULL_REQUEST_TEMPLATE.md"))).toBe(
       true,

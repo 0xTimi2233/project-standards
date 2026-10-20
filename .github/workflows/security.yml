@@ -1,0 +1,26 @@
+name: Security
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: 密钥泄露扫描
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 安装 Gitleaks CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo gitleaks/gitleaks --pattern '*_linux_x64.tar.gz' --output - | sudo tar -xz -C /usr/local/bin gitleaks
+
+      - name: 执行全量提交密钥扫描
+        run: gitleaks git --verbose --redact .
