@@ -1,6 +1,6 @@
 {
   "name": "project-standards",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "跨技术栈通用工程元数据规范与基线配置工具",
   "type": "module",
   "bin": {
