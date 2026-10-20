@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 import { $ } from 'bun'
 import { parse } from 'smol-toml'
 
-async function getRemoteLatestTag(): Promise<string | null> {
+export async function getRemoteLatestTag(): Promise<string | null> {
   await $`git fetch --tags origin`.quiet()
   const raw = await $`git tag -l --sort=-v:refname`.text()
   const tags = raw
@@ -15,7 +15,7 @@ async function getRemoteLatestTag(): Promise<string | null> {
   return tags[0] ?? null
 }
 
-async function getLocalBaseVersion(rootDir: string): Promise<string> {
+export async function getLocalBaseVersion(rootDir: string): Promise<string> {
   const pkgPath = resolve(rootDir, 'package.json')
   if (existsSync(pkgPath)) {
     const pkg = (await Bun.file(pkgPath).json()) as { version?: string }
@@ -49,7 +49,16 @@ async function getLocalBaseVersion(rootDir: string): Promise<string> {
   return '0.1.0'
 }
 
-function bumpVersion(baseVer: string, bumpType: string): string {
+export function parseDirtyFiles(statusOutput: string): string[] {
+  const trimmed = statusOutput.trim()
+  if (!trimmed) return []
+  return trimmed
+    .split('\n')
+    .map((line) => line.trim().split(/\s+/).slice(1).join(' '))
+    .filter((file) => file.length > 0 && file !== 'CHANGELOG.md')
+}
+
+export function bumpVersion(baseVer: string, bumpType: string): string {
   const parts = baseVer.replace(/^v/, '').split('.').map(Number)
   let [major = 0, minor = 1, patch = 0] = parts
 
@@ -73,7 +82,19 @@ function bumpVersion(baseVer: string, bumpType: string): string {
   return `${major}.${minor}.${patch}`
 }
 
-async function updateVersionInFiles(newVersion: string, rootDir: string): Promise<string[]> {
+export function isVersionGreater(newVer: string, baseVer: string): boolean {
+  const p1 = newVer.replace(/^v/, '').split('.').map(Number)
+  const p2 = baseVer.replace(/^v/, '').split('.').map(Number)
+  for (let i = 0; i < 3; i++) {
+    const n1 = p1[i] ?? 0
+    const n2 = p2[i] ?? 0
+    if (n1 > n2) return true
+    if (n1 < n2) return false
+  }
+  return false
+}
+
+export async function updateVersionInFiles(newVersion: string, rootDir: string): Promise<string[]> {
   const modified: string[] = []
 
   const pkgPath = resolve(rootDir, 'package.json')
@@ -119,7 +140,7 @@ async function updateVersionInFiles(newVersion: string, rootDir: string): Promis
   return modified
 }
 
-async function checkChangelogEntry(version: string, rootDir: string): Promise<void> {
+export async function checkChangelogEntry(version: string, rootDir: string): Promise<void> {
   const changelogPath = resolve(rootDir, 'CHANGELOG.md')
   if (!existsSync(changelogPath)) {
     return
@@ -136,18 +157,13 @@ async function main() {
   const rootDir = process.cwd()
   const bumpArg = process.argv[2] ?? 'patch'
 
-  const statusOutput = (await $`git status --porcelain`.text()).trim()
-  if (statusOutput.length > 0) {
-    const dirtyFiles = statusOutput
-      .split('\n')
-      .map((line) => line.slice(3).trim())
-      .filter((file) => file !== 'CHANGELOG.md')
-    if (dirtyFiles.length > 0) {
-      console.error(
-        `[release] error: working tree has uncommitted changes in: ${dirtyFiles.join(', ')}. please commit or stash them first.`,
-      )
-      process.exit(1)
-    }
+  const rawStatus = await $`git status --porcelain`.text()
+  const dirtyFiles = parseDirtyFiles(rawStatus)
+  if (dirtyFiles.length > 0) {
+    console.error(
+      `[release] error: working tree has uncommitted changes in: ${dirtyFiles.join(', ')}. please commit or stash them first.`,
+    )
+    process.exit(1)
   }
 
   const currentBranch = (await $`git branch --show-current`.text()).trim()
@@ -164,21 +180,17 @@ async function main() {
   const targetVersion = bumpVersion(baseVer, bumpArg)
   const targetTag = `v${targetVersion}`
 
-  // 1. 严格检查 CHANGELOG.md 是否已记录该版本
   await checkChangelogEntry(targetVersion, rootDir)
 
   console.log(`[release] target version: ${targetVersion} (${targetTag})`)
 
-  // 2. 自动原子更新各文件中的版本号
   const updatedFiles = await updateVersionInFiles(targetVersion, rootDir)
   console.log(`[release] updated version in: ${updatedFiles.join(', ')}`)
 
-  // 3. 运行代码格式化
   if (existsSync(resolve(rootDir, 'biome.json'))) {
     await $`bun run format`.quiet()
   }
 
-  // 4. 创建 Release PR
   const releaseBranch = `chore/release-v${targetVersion}`
   console.log(`[release] creating branch: ${releaseBranch}...`)
   await $`git checkout -b ${releaseBranch}`
@@ -193,11 +205,9 @@ async function main() {
   const prUrl = prOut.trim()
   console.log(`[release] PR created: ${prUrl}`)
 
-  // 5. 开启自动合并
   console.log('[release] enabling auto-merge for release PR...')
   await $`gh pr merge ${prUrl} --auto --squash --delete-branch`.quiet()
 
-  // 6. 等待门禁跑通并合入
   console.log('[release] waiting for CI checks to pass and merge...')
   for (let i = 0; i < 40; i++) {
     const prState = await $`gh pr view ${prUrl} --json state,mergedAt`.text()
@@ -209,12 +219,10 @@ async function main() {
     await $`sleep 5`
   }
 
-  // 7. 切回主干并同步
   await $`git checkout ${currentBranch}`
   await $`git pull origin ${currentBranch}`
   await $`git branch -D ${releaseBranch} 2>/dev/null || true`.quiet()
 
-  // 8. 打 Tag 并推送到远端
   console.log(`[release] creating and pushing tag ${targetTag}...`)
   await $`git tag -a ${targetTag} -m "Release ${targetTag}"`
   await $`git push origin ${targetTag}`
@@ -222,7 +230,9 @@ async function main() {
   console.log(`[release] successfully published ${targetTag}! Cloud release workflow dispatched.`)
 }
 
-main().catch((err: unknown) => {
-  console.error(err instanceof Error ? err.message : String(err))
-  process.exit(1)
-})
+if (import.meta.main) {
+  main().catch((err: unknown) => {
+    console.error(err instanceof Error ? err.message : String(err))
+    process.exit(1)
+  })
+}
