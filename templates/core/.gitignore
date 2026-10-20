@@ -21,3 +21,4 @@ logs/
 
 # Tools and Local Indexes
 .codegraph/
+.archify/

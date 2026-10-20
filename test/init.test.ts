@@ -66,6 +66,7 @@ describe('initLocalBaseline', () => {
     expect(res.stack).toBe('bun')
 
     expect(existsSync(join(tempDir, 'biome.json'))).toBe(true)
+    expect(existsSync(join(tempDir, 'release-please-config.json'))).toBe(true)
     expect(existsSync(join(tempDir, '.github/workflows/ci.yml'))).toBe(true)
     expect(existsSync(join(tempDir, '.github/workflows/release.yml'))).toBe(true)
 
@@ -85,6 +86,7 @@ describe('initLocalBaseline', () => {
     expect(res.stack).toBe('uv')
 
     expect(existsSync(join(tempDir, 'ruff.toml'))).toBe(true)
+    expect(existsSync(join(tempDir, 'release-please-config.json'))).toBe(true)
     expect(existsSync(join(tempDir, '.github/workflows/ci.yml'))).toBe(true)
     expect(existsSync(join(tempDir, '.github/workflows/release.yml'))).toBe(true)
 

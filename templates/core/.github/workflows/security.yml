@@ -1,4 +1,4 @@
-name: Security
+name: 安全审计
 
 on:
   workflow_call:
@@ -7,8 +7,8 @@ permissions:
   contents: read
 
 jobs:
-  gitleaks:
-    name: 密钥泄露扫描
+  audit:
+    name: 安全审计
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

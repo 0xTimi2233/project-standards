@@ -4,7 +4,6 @@ import type { Manifest, ManifestEntry, SupportedStack, Visibility } from '@/type
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 export const ROOT_DIR = resolve(currentDir, '..')
-export const TEMPLATES_DIR = resolve(ROOT_DIR, 'templates')
 
 export const CORE_ENTRIES: ManifestEntry[] = [
   {
@@ -109,6 +108,11 @@ export const STACK_ENTRIES: Record<SupportedStack, ManifestEntry[]> = {
       strategy: 'overwrite',
     },
     {
+      src: 'templates/stacks/bun/release-please-config.json',
+      dest: 'release-please-config.json',
+      strategy: 'create-only',
+    },
+    {
       src: 'templates/stacks/bun/biome.template.json',
       dest: 'biome.json',
       strategy: 'create-only',
@@ -129,6 +133,11 @@ export const STACK_ENTRIES: Record<SupportedStack, ManifestEntry[]> = {
       src: 'templates/stacks/uv/.github/workflows/release.yml',
       dest: '.github/workflows/release.yml',
       strategy: 'overwrite',
+    },
+    {
+      src: 'templates/stacks/uv/release-please-config.json',
+      dest: 'release-please-config.json',
+      strategy: 'create-only',
     },
     {
       src: 'templates/stacks/uv/ruff.toml',

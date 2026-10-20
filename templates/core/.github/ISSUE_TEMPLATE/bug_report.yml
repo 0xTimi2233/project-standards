@@ -19,8 +19,8 @@ body:
       label: 运行环境
       description: 填写操作系统版本、核心运行时版本以及关键依赖版本。
       placeholder: |
-        - 操作系统：如 macOS 15.0 / Ubuntu 24.04
-        - 运行环境：如 Bun 1.2 / Rust 1.85 / Python 3.12
+        - 操作系统：如 macOS 15.0 / Ubuntu 24.04 / Windows 11
+        - 运行环境：如 Rust 1.85 / Bun 1.2 / Python 3.12
     validations:
       required: true
   - type: textarea
