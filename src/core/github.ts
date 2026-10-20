@@ -7,8 +7,10 @@ import type { LabelDefinition, RulesetDefinition } from "@/types.ts";
 export async function syncSettings(repo: string): Promise<void> {
   log(`[settings] sync repo: ${repo}`);
   try {
-    await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge`.quiet();
-    log(`[settings] auto-merge=true delete-branch-on-merge=true`);
+    await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge --enable-discussions`.quiet();
+    log(
+      `[settings] auto-merge=true delete-branch-on-merge=true discussions=true`,
+    );
   } catch (error) {
     throw new Error(
       `failed to sync repository settings (${repo}): ${error instanceof Error ? error.message : String(error)}`,

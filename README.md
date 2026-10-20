@@ -48,7 +48,7 @@ standards apply .
 | `sync` | `<owner/repo>` | 仅同步 GitHub 远端配置（仓库设置 + 标签集合 + 分支保护规则集） |
 | `sync-labels` | `<owner/repo>` | 单独同步标准标签体系并清理非标标签 |
 | `sync-ruleset` | `<owner/repo>` | 单独同步默认分支保护规则集（适配免费私有仓库降级） |
-| `sync-settings` | `<owner/repo>` | 单独同步仓库属性（开启自动合并与分支自动回收） |
+| `sync-settings` | `<owner/repo>` | 单独同步仓库属性（开启自动合并、分支自动回收与 Discussions） |
 | `apply` | `[target_dir]` | 复合命令：先执行 `init`，若检测到 Git 远端则自动执行 `sync` |
 
 ## 规范资产清单
@@ -65,9 +65,9 @@ standards apply .
 
 ### GitHub 协作模板
 
-- 全局配置：[.github/ISSUE_TEMPLATE/config.yaml](.github/ISSUE_TEMPLATE/config.yaml)，禁用空白 Issue 提交并引导至 Discussions
-- 缺陷报告表单：[.github/ISSUE_TEMPLATE/bug_report.yaml](.github/ISSUE_TEMPLATE/bug_report.yaml)
-- 功能需求表单：[.github/ISSUE_TEMPLATE/feature_request.yaml](.github/ISSUE_TEMPLATE/feature_request.yaml)
+- 全局配置：[.github/ISSUE_TEMPLATE/config.yml](.github/ISSUE_TEMPLATE/config.yml)，禁用空白 Issue 提交并引导至 Discussions
+- 缺陷报告表单：[.github/ISSUE_TEMPLATE/bug_report.yml](.github/ISSUE_TEMPLATE/bug_report.yml)
+- 功能需求表单：[.github/ISSUE_TEMPLATE/feature_request.yml](.github/ISSUE_TEMPLATE/feature_request.yml)
 - 合并请求模板：[.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)
 
 ### 标准标签集合

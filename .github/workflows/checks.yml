@@ -1,0 +1,72 @@
+name: Checks
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-typecheck:
+    name: 静态分析与类型检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 设置 Bun 运行时
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+
+      - name: 安装项目依赖
+        run: bun install --frozen-lockfile
+
+      - name: 格式规范与代码检查 (Biome)
+        run: bun run lint
+
+      - name: TypeScript 类型检查
+        run: bun run typecheck
+
+  test:
+    name: 跨平台测试 - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 设置 Bun 运行时
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+
+      - name: 安装项目依赖
+        run: bun install --frozen-lockfile
+
+      - name: 执行自动化单测
+        run: bun test
+
+  docs:
+    name: 文档规范与链接检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 安装文档校验工具
+        run: |
+          npm install -g markdownlint-cli2 @mermaid-js/mermaid-cli
+          curl -s https://api.github.com/repos/lycheeverse/lychee/releases/latest | grep "browser_download_url.*x86_64-unknown-linux-gnu.tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -qi -
+          tar -xzf lychee-*.tar.gz && sudo mv lychee /usr/local/bin/
+
+      - name: 检查文档格式与离线链接
+        run: |
+          markdownlint-cli2 "**/*.md"
+          lychee --offline .
