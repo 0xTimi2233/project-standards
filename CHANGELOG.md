@@ -2,6 +2,13 @@
 
 本项目遵循语义化版本规范，格式基于保持更新日志原则。
 
+## [0.2.1](https://github.com/0xTimi2233/project-standards/compare/v0.2.0...v0.2.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* **workflow:** 显式声明 shell: bash 保障 Windows runner 正确解析环境变量 ([#30](https://github.com/0xTimi2233/project-standards/issues/30)) ([c7829e9](https://github.com/0xTimi2233/project-standards/commit/c7829e936bde83f1eca915afcff6f27b6c0aa5f8))
+
 ## [0.2.0](https://github.com/0xTimi2233/project-standards/compare/v0.1.0...v0.2.0) (2026-10-20)
 
 ### Features
