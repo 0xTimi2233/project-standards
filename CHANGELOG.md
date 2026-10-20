@@ -2,6 +2,28 @@
 
 本项目遵循语义化版本规范，格式基于保持更新日志原则。
 
+## [0.2.0](https://github.com/0xTimi2233/project-standards/compare/v0.1.0...v0.2.0) (2026-10-20)
+
+
+### Features
+
+* **core:** 支持多技术栈 Provider 架构与声明式 Release PR 自动化 ([#25](https://github.com/0xTimi2233/project-standards/issues/25)) ([cd1dfb2](https://github.com/0xTimi2233/project-standards/commit/cd1dfb2026e3cf390bb2b274845d1c997f3399b9))
+* **release:** 彻底采用标准结构化解析并对齐 dist 动态发布流水线 ([#15](https://github.com/0xTimi2233/project-standards/issues/15)) ([3198f99](https://github.com/0xTimi2233/project-standards/commit/3198f99c91f312a9442137d449d5e028654b01dc))
+
+
+### Bug Fixes
+
+* **ci:** 在 dist 配置中添加 allow-dirty 允许自定义工作流 ([#16](https://github.com/0xTimi2233/project-standards/issues/16)) ([1b2e9f7](https://github.com/0xTimi2233/project-standards/commit/1b2e9f7f6202a37ea0b62ff3a4574a9f37ee5268))
+* **ci:** 在 release 工作流的构建任务中添加 setup-bun 步骤 ([#23](https://github.com/0xTimi2233/project-standards/issues/23)) ([b2d6801](https://github.com/0xTimi2233/project-standards/commit/b2d6801aa814b854956bfa398a5d52fcbb859c8f))
+* **release:** 修复工作区文件名解析错误并补充单元测试 ([#21](https://github.com/0xTimi2233/project-standards/issues/21)) ([4021df3](https://github.com/0xTimi2233/project-standards/commit/4021df3f23150587d5de47ff3b5e17e30f3aa2cf))
+* **release:** 完善发布脚本的元数据更新与前置校验逻辑 ([#19](https://github.com/0xTimi2233/project-standards/issues/19)) ([08e1dbc](https://github.com/0xTimi2233/project-standards/commit/08e1dbc5696e72279583a63674024d72eab76258))
+* **settings:** 自动配置 GitHub Actions 创建 PR 权限 ([#28](https://github.com/0xTimi2233/project-standards/issues/28)) ([5aefd28](https://github.com/0xTimi2233/project-standards/commit/5aefd28761014150b9f0d2034818632d92131a19))
+
+
+### Reverts
+
+* **dist:** 移除 dist 配置文件并恢复极简两阶段发布流水线 ([#24](https://github.com/0xTimi2233/project-standards/issues/24)) ([c631337](https://github.com/0xTimi2233/project-standards/commit/c63133702b798ef6921bffeb75520ee9c60dc194))
+
 ## [0.1.0] - 2026-10-20
 
 ### 新增
