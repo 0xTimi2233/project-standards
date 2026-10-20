@@ -1,7 +1,8 @@
+<!-- markdownlint-disable-file MD041 -->
 ## 变更背景
 
 <!-- 阐述变更背景、解决的核心痛点以及关闭的关联 Issue，例如 Closes #123 -->
 
 ## 核心改动
 
-- 
+-

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "project-standards-manifest",
+  "version": "1.0.0",
+  "entries": [
+    {
+      "src": ".gitmessage",
+      "dest": ".gitmessage",
+      "strategy": "overwrite"
+    },
+    {
+      "src": ".github/ISSUE_TEMPLATE",
+      "dest": ".github/ISSUE_TEMPLATE",
+      "strategy": "overwrite"
+    },
+    {
+      "src": ".github/PULL_REQUEST_TEMPLATE.md",
+      "dest": ".github/PULL_REQUEST_TEMPLATE.md",
+      "strategy": "overwrite"
+    },
+    {
+      "src": ".github/labels.json",
+      "dest": ".github/labels.json",
+      "strategy": "overwrite"
+    },
+    {
+      "src": ".github/ruleset.json",
+      "dest": ".github/ruleset.json",
+      "strategy": "overwrite"
+    },
+    {
+      "src": "renovate.json",
+      "dest": "renovate.json",
+      "strategy": "create-only"
+    },
+    {
+      "src": "CONTRIBUTING.md",
+      "dest": "CONTRIBUTING.md",
+      "strategy": "create-only"
+    },
+    {
+      "src": "SECURITY.md",
+      "dest": "SECURITY.md",
+      "strategy": "create-only"
+    },
+    {
+      "src": ".gitignore",
+      "dest": ".gitignore",
+      "strategy": "merge-lines"
+    }
+  ]
+}

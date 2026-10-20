@@ -1,0 +1,19 @@
+{
+  "name": "project-standards",
+  "version": "1.0.0",
+  "description": "跨技术栈通用工程元数据规范与基线配置工具",
+  "type": "module",
+  "bin": {
+    "standards": "./bin/standards.ts"
+  },
+  "scripts": {
+    "typecheck": "bun check",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  }
+}
