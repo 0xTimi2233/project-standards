@@ -27,6 +27,7 @@ describe('initLocalBaseline', () => {
     expect(existsSync(join(tempDir, 'renovate.json'))).toBe(true)
     expect(existsSync(join(tempDir, 'CONTRIBUTING.md'))).toBe(true)
     expect(existsSync(join(tempDir, 'SECURITY.md'))).toBe(true)
+    expect(existsSync(join(tempDir, '.markdownlint-cli2.jsonc'))).toBe(true)
     expect(existsSync(join(tempDir, '.gitignore'))).toBe(true)
   })
 

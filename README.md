@@ -61,7 +61,7 @@ standards apply .
 ### 分支保护规则集
 
 定义文件：[.github/ruleset.json](.github/ruleset.json)  
-作用于默认分支，强制禁止删除分支与强制推送，要求必须通过 PR 合并并解决所有审查讨论。支持 GitHub Free 私有仓库降级静默处理。
+作用于默认分支，强制禁止删除分支与强制推送，要求必须通过 PR 合并、解决所有审查讨论，并强制要求通过「合并门禁」状态检查。支持 GitHub Free 私有仓库降级静默处理。
 
 ### GitHub 协作模板
 

@@ -60,13 +60,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 安装文档校验工具
-        run: |
-          npm install -g markdownlint-cli2 @mermaid-js/mermaid-cli
-          curl -s https://api.github.com/repos/lycheeverse/lychee/releases/latest | grep "browser_download_url.*x86_64-unknown-linux-gnu.tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -qi -
-          tar -xzf lychee-*.tar.gz && sudo mv lychee /usr/local/bin/
+      - name: Markdown 格式规范检查
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          globs: "**/*.md"
 
-      - name: 检查文档格式与离线链接
-        run: |
-          markdownlint-cli2 "**/*.md"
-          lychee --offline .
+      - name: Markdown 链接有效性检查
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --offline .

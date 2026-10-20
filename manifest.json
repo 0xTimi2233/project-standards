@@ -44,6 +44,11 @@
       "strategy": "create-only"
     },
     {
+      "src": ".markdownlint-cli2.jsonc",
+      "dest": ".markdownlint-cli2.jsonc",
+      "strategy": "create-only"
+    },
+    {
       "src": ".gitignore",
       "dest": ".gitignore",
       "strategy": "merge-lines"
