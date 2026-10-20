@@ -1,0 +1,8 @@
+# Dependencies and Runtime
+node_modules/
+bun.lockb
+
+# Build Outputs
+dist/
+out/
+*.tsbuildinfo

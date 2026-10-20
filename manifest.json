@@ -1,60 +1,64 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "project-standards-manifest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "entries": [
     {
-      "src": ".gitmessage",
+      "src": "templates/core/.gitmessage",
       "dest": ".gitmessage",
       "strategy": "overwrite"
     },
     {
-      "src": ".github/ISSUE_TEMPLATE",
+      "src": "templates/core/.github/ISSUE_TEMPLATE",
       "dest": ".github/ISSUE_TEMPLATE",
       "strategy": "overwrite"
     },
     {
-      "src": ".github/PULL_REQUEST_TEMPLATE.md",
+      "src": "templates/core/.github/PULL_REQUEST_TEMPLATE.md",
       "dest": ".github/PULL_REQUEST_TEMPLATE.md",
       "strategy": "overwrite"
     },
     {
-      "src": ".github/labels.json",
+      "src": "templates/core/.github/labels.json",
       "dest": ".github/labels.json",
       "strategy": "overwrite"
     },
     {
-      "src": ".github/ruleset.json",
+      "src": "templates/core/.github/ruleset.json",
       "dest": ".github/ruleset.json",
       "strategy": "overwrite"
     },
     {
-      "src": "renovate.json",
+      "src": "templates/core/.github/workflows/cache-cleanup.yml",
+      "dest": ".github/workflows/cache-cleanup.yml",
+      "strategy": "overwrite"
+    },
+    {
+      "src": "templates/core/.github/workflows/security.yml",
+      "dest": ".github/workflows/security.yml",
+      "strategy": "overwrite"
+    },
+    {
+      "src": "templates/core/renovate.json",
       "dest": "renovate.json",
       "strategy": "create-only"
     },
     {
-      "src": "CONTRIBUTING.md",
+      "src": "templates/core/CONTRIBUTING.md",
       "dest": "CONTRIBUTING.md",
       "strategy": "create-only"
     },
     {
-      "src": "SECURITY.md",
+      "src": "templates/core/SECURITY.md",
       "dest": "SECURITY.md",
       "strategy": "create-only"
     },
     {
-      "src": ".markdownlint-cli2.jsonc",
+      "src": "templates/core/.markdownlint-cli2.jsonc",
       "dest": ".markdownlint-cli2.jsonc",
       "strategy": "create-only"
     },
     {
-      "src": "scripts/release.ts",
-      "dest": "scripts/release.ts",
-      "strategy": "create-only"
-    },
-    {
-      "src": ".gitignore",
+      "src": "templates/core/.gitignore",
       "dest": ".gitignore",
       "strategy": "merge-lines"
     }

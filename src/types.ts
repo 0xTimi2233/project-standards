@@ -1,3 +1,7 @@
+export type SupportedStack = 'rust' | 'bun' | 'uv'
+
+export type Visibility = 'public' | 'private'
+
 export type SyncStrategy = 'overwrite' | 'create-only' | 'merge-lines'
 
 export interface ManifestEntry {
@@ -11,6 +15,19 @@ export interface Manifest {
   version: string
   entries: ManifestEntry[]
 }
+
+export interface InitOptions {
+  stack?: SupportedStack
+  visibility?: Visibility
+  silent?: boolean
+}
+
+export interface SyncOptions {
+  visibility?: Visibility
+  silent?: boolean
+}
+
+export interface ApplyOptions extends InitOptions {}
 
 export interface LabelDefinition {
   name: string

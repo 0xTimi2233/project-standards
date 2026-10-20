@@ -1,17 +1,15 @@
 import { existsSync, statSync } from 'node:fs'
 import { copyFile, cp, mkdir } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
-import { loadManifest, ROOT_DIR } from '@/config.ts'
+import { buildManifest, ROOT_DIR } from '@/config.ts'
+import { detectStack, detectVisibility } from '@/core/detector.ts'
 import { mergeGitignore } from '@/core/gitignore.ts'
-
-export interface InitOptions {
-  silent?: boolean
-}
+import type { InitOptions, SupportedStack, Visibility } from '@/types.ts'
 
 export async function initLocalBaseline(
   targetPath: string,
   options: InitOptions = {},
-): Promise<void> {
+): Promise<{ stack: SupportedStack | null; visibility: Visibility }> {
   const targetDir = resolve(process.cwd(), targetPath)
   if (!existsSync(targetDir) || !statSync(targetDir).isDirectory()) {
     throw new Error(`invalid target directory: ${targetDir}`)
@@ -24,7 +22,13 @@ export async function initLocalBaseline(
   }
 
   log(`[init] target: ${targetDir}`)
-  const manifest = await loadManifest()
+
+  const stack = options.stack ?? (await detectStack(targetDir))
+  const visibility = options.visibility ?? (await detectVisibility(null, targetDir))
+
+  log(`[init] detected stack: ${stack ?? 'generic'} | visibility: ${visibility}`)
+
+  const manifest = buildManifest(stack ?? undefined, visibility)
 
   for (const entry of manifest.entries) {
     const srcPath = resolve(ROOT_DIR, entry.src)
@@ -76,4 +80,5 @@ export async function initLocalBaseline(
   }
 
   log(`[done] local baseline initialized`)
+  return { stack, visibility }
 }

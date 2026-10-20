@@ -11,8 +11,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "bun run typecheck && biome check .",
-    "test": "bun test",
-    "release": "bun scripts/release.ts"
+    "test": "bun test"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

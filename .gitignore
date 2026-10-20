@@ -30,3 +30,6 @@ logs/
 # Environment and Secrets
 .env
 .env*.local
+
+# Tools and Local Indexes
+.codegraph/

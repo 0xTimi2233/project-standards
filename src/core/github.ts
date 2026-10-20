@@ -1,14 +1,22 @@
-import { existsSync, statSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { $ } from 'bun'
 import { ROOT_DIR } from '@/config.ts'
-import type { LabelDefinition, RulesetDefinition } from '@/types.ts'
+import { detectVisibility } from '@/core/detector.ts'
+import type { LabelDefinition, RulesetDefinition, SyncOptions, Visibility } from '@/types.ts'
 
-export async function syncSettings(repo: string): Promise<void> {
-  log(`[settings] sync repo: ${repo}`)
+export async function syncSettings(repo: string, visibility?: Visibility): Promise<void> {
+  const effectiveVisibility = visibility ?? (await detectVisibility(repo))
+  log(`[settings] sync repo: ${repo} (visibility: ${effectiveVisibility})`)
+
+  const discussionsFlag =
+    effectiveVisibility === 'public' ? '--enable-discussions' : '--enable-discussions=false'
+
   try {
-    await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge --enable-discussions`.quiet()
-    log(`[settings] auto-merge=true delete-branch-on-merge=true discussions=true`)
+    await $`gh repo edit ${repo} --enable-auto-merge --delete-branch-on-merge ${discussionsFlag}`.quiet()
+    log(
+      `[settings] auto-merge=true delete-branch-on-merge=true discussions=${effectiveVisibility === 'public'}`,
+    )
   } catch (error) {
     throw new Error(
       `failed to sync repository settings (${repo}): ${error instanceof Error ? error.message : String(error)}`,
@@ -17,7 +25,7 @@ export async function syncSettings(repo: string): Promise<void> {
 }
 
 export async function syncLabels(repo: string): Promise<void> {
-  const manifestPath = resolve(ROOT_DIR, '.github/labels.json')
+  const manifestPath = resolve(ROOT_DIR, 'templates/core/.github/labels.json')
   if (!existsSync(manifestPath)) {
     throw new Error(`labels definition missing: ${manifestPath}`)
   }
@@ -37,6 +45,7 @@ export async function syncLabels(repo: string): Promise<void> {
     )
   }
 
+  // 清除不在基线规范中的全部冗余标签（自动化插件如 Renovate 或 release-please 需要时会自动按需创建）
   for (const remote of remoteLabels) {
     if (!baselineNames.has(remote.name)) {
       log(`[labels] prune: ${remote.name}`)
@@ -44,6 +53,7 @@ export async function syncLabels(repo: string): Promise<void> {
     }
   }
 
+  // 应用标准标签体系
   for (const label of baselineLabels) {
     log(`[labels] apply: ${label.name}`)
     await $`gh label create ${label.name} --color ${label.color} --description ${label.description} --repo ${repo} --force`.quiet()
@@ -51,7 +61,7 @@ export async function syncLabels(repo: string): Promise<void> {
 }
 
 export async function syncRuleset(repo: string): Promise<void> {
-  const rulesetPath = resolve(ROOT_DIR, '.github/ruleset.json')
+  const rulesetPath = resolve(ROOT_DIR, 'templates/core/.github/ruleset.json')
   if (!existsSync(rulesetPath)) {
     throw new Error(`ruleset definition missing: ${rulesetPath}`)
   }
@@ -63,7 +73,10 @@ export async function syncRuleset(repo: string): Promise<void> {
     const res = await $`gh api repos/${repo}/rulesets`.nothrow()
     responseText = res.stdout.toString() + res.stderr.toString()
     if (res.exitCode !== 0) {
-      if (responseText.includes('Upgrade to GitHub Pro')) {
+      if (
+        responseText.includes('Upgrade to GitHub Pro') ||
+        responseText.includes('not supported')
+      ) {
         log(`[ruleset] skipped (github free private repo does not support rulesets)`)
         return
       }
@@ -72,7 +85,10 @@ export async function syncRuleset(repo: string): Promise<void> {
       )
     }
   } catch (error) {
-    if (String(error).includes('Upgrade to GitHub Pro')) {
+    if (
+      String(error).includes('Upgrade to GitHub Pro') ||
+      String(error).includes('not supported')
+    ) {
       log(`[ruleset] skipped (github free private repo does not support rulesets)`)
       return
     }
@@ -97,18 +113,24 @@ export async function syncRuleset(repo: string): Promise<void> {
   }
 }
 
-export async function syncGitHub(repo: string): Promise<void> {
-  await syncSettings(repo)
+export async function syncGitHub(repo: string, options: SyncOptions = {}): Promise<void> {
+  const visibility = options.visibility ?? (await detectVisibility(repo))
+  await syncSettings(repo, visibility)
   await syncLabels(repo)
   await syncRuleset(repo)
-  log(`[done] github remote synchronized`)
+  log(`[done] github remote synchronized (${repo})`)
 }
 
 export async function resolveRepoSlug(targetPath: string): Promise<string | null> {
   const targetDir = resolve(process.cwd(), targetPath)
-  const gitDir = resolve(targetDir, '.git')
 
-  if (!existsSync(gitDir) || !statSync(gitDir).isDirectory()) {
+  // 原生兼容标准 Git 目录、Submodule 以及 Git Worktree 环境
+  try {
+    const isInsideWorkTree = (
+      await $`git -C ${targetDir} rev-parse --is-inside-work-tree`.text()
+    ).trim()
+    if (isInsideWorkTree !== 'true') return null
+  } catch {
     return null
   }
 
