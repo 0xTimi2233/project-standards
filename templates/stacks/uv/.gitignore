@@ -1,0 +1,16 @@
+# Python and uv Environments
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution and Packaging
+dist/
+build/
+*.egg-info/
+
+# Tool Caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

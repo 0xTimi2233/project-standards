@@ -1,0 +1,23 @@
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test Coverage
+coverage/
+
+# Logs
+logs/
+*.log
+
+# Environment and Secrets
+.env
+.env*.local
+
+# Tools and Local Indexes
+.codegraph/

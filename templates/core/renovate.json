@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits"],
+  "timezone": "Asia/Shanghai",
+  "schedule": ["after 6am and before 7am on monday"],
+  "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "platformAutomerge": true,
+  "packageRules": [
+    {
+      "description": "Auto-merge all non-major and digest updates",
+      "matchUpdateTypes": ["minor", "patch", "digest", "lockFileMaintenance"],
+      "groupName": "all non-major dependencies",
+      "automerge": true
+    },
+    {
+      "description": "Separate PRs for major updates",
+      "matchUpdateTypes": ["major"]
+    }
+  ]
+}

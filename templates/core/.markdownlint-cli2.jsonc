@@ -1,0 +1,11 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": false,
+    "MD028": false,
+    "MD033": false
+  },
+  "gitignore": true,
+  "noBanner": true
+}
