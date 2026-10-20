@@ -16,11 +16,5 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: 安装 Gitleaks CLI
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download --repo gitleaks/gitleaks --pattern '*_linux_x64.tar.gz' --output - | sudo tar -xz -C /usr/local/bin gitleaks
-
-      - name: 执行全量提交密钥扫描
-        run: gitleaks git --verbose --redact .
+      - name: 全量提交密钥扫描
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
