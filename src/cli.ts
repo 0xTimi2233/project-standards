@@ -4,8 +4,8 @@ import {
   syncLabels,
   syncRuleset,
   syncSettings,
-} from "@/core/github.ts";
-import { initLocalBaseline } from "@/core/init.ts";
+} from '@/core/github.ts'
+import { initLocalBaseline } from '@/core/init.ts'
 
 function printHelp(): void {
   console.log(`Usage: standards <command> [arguments]
@@ -21,90 +21,77 @@ Commands:
 
 Options:
   -h, --help              Show this help message
-`);
+`)
 }
 
 export async function runCli(args: string[]): Promise<void> {
-  const [command, target] = args;
+  const [command, target] = args
 
-  if (
-    !command ||
-    command === "-h" ||
-    command === "--help" ||
-    command === "help"
-  ) {
-    printHelp();
-    return;
+  if (!command || command === '-h' || command === '--help' || command === 'help') {
+    printHelp()
+    return
   }
 
   switch (command) {
-    case "init": {
+    case 'init': {
       if (!target) {
-        throw new Error(
-          "missing target directory. usage: standards init <target>",
-        );
+        throw new Error('missing target directory. usage: standards init <target>')
       }
-      await initLocalBaseline(target);
-      break;
+      await initLocalBaseline(target)
+      break
     }
 
-    case "sync-labels": {
+    case 'sync-labels': {
       if (!target) {
-        throw new Error(
-          "missing repo. usage: standards sync-labels <owner/repo>",
-        );
+        throw new Error('missing repo. usage: standards sync-labels <owner/repo>')
       }
-      await syncLabels(target);
-      break;
+      await syncLabels(target)
+      break
     }
 
-    case "sync-ruleset": {
+    case 'sync-ruleset': {
       if (!target) {
-        throw new Error(
-          "missing repo. usage: standards sync-ruleset <owner/repo>",
-        );
+        throw new Error('missing repo. usage: standards sync-ruleset <owner/repo>')
       }
-      await syncRuleset(target);
-      break;
+      await syncRuleset(target)
+      break
     }
 
-    case "sync-settings": {
+    case 'sync-settings': {
       if (!target) {
-        throw new Error(
-          "missing repo. usage: standards sync-settings <owner/repo>",
-        );
+        throw new Error('missing repo. usage: standards sync-settings <owner/repo>')
       }
-      await syncSettings(target);
-      break;
+      await syncSettings(target)
+      break
     }
 
-    case "sync":
-    case "sync-github": {
+    case 'sync':
+    case 'sync-github': {
       if (!target) {
-        throw new Error("missing repo. usage: standards sync <owner/repo>");
+        throw new Error('missing repo. usage: standards sync <owner/repo>')
       }
-      await syncGitHub(target);
-      break;
+      await syncGitHub(target)
+      break
     }
 
-    case "apply": {
-      const targetDir = target || ".";
-      await initLocalBaseline(targetDir);
+    case 'apply': {
+      const targetDir = target || '.'
+      await initLocalBaseline(targetDir)
 
-      const repoSlug = await resolveRepoSlug(targetDir);
+      const repoSlug = await resolveRepoSlug(targetDir)
       if (repoSlug) {
-        console.log(`[apply] detected remote: ${repoSlug}`);
-        await syncGitHub(repoSlug);
+        console.log(`[apply] detected remote: ${repoSlug}`)
+        await syncGitHub(repoSlug)
       } else {
-        console.log("[apply] no remote github repository detected");
+        console.log('[apply] no remote github repository detected')
       }
-      break;
+      break
     }
 
     default: {
-      console.error(`unknown command: ${command}`);
-      printHelp();
-      process.exitCode = 1;
+      console.error(`unknown command: ${command}`)
+      printHelp()
+      process.exitCode = 1
     }
   }
 }
