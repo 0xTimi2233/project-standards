@@ -33,6 +33,7 @@ logs/
 
 # Tools and Local Indexes
 .codegraph/
+.archify/
 
 # --- Standard Baseline Ignore Rules ---
 bun.lockb
