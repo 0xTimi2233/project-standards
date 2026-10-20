@@ -119,34 +119,35 @@ async function updateVersionInFiles(newVersion: string, rootDir: string): Promis
   return modified
 }
 
-async function archiveChangelog(newVersion: string, rootDir: string): Promise<boolean> {
+async function checkChangelogEntry(version: string, rootDir: string): Promise<void> {
   const changelogPath = resolve(rootDir, 'CHANGELOG.md')
-  if (!existsSync(changelogPath)) return false
-
-  let content = await readFile(changelogPath, 'utf-8')
-  if (content.includes(`## [${newVersion}]`)) return false
-
-  const today = new Date().toISOString().slice(0, 10)
-  const header = `## [${newVersion}] - ${today}\n\n### 优化\n- 自动化工程基线与流水线适配。`
-
-  if (content.includes('## [Unreleased]')) {
-    content = content.replace('## [Unreleased]', `## [Unreleased]\n\n${header}`)
-  } else {
-    content = content.replace(/(# 变更日志[\s\S]*?\n\n)(## \[)/, `$1${header}\n\n$2`)
+  if (!existsSync(changelogPath)) {
+    return
   }
-
-  await writeFile(changelogPath, content, 'utf-8')
-  return true
+  const content = await readFile(changelogPath, 'utf-8')
+  if (!content.includes(`## [${version}]`)) {
+    throw new Error(
+      `[release] error: CHANGELOG.md is missing an entry for [${version}]. please document release notes before releasing.`,
+    )
+  }
 }
 
 async function main() {
   const rootDir = process.cwd()
   const bumpArg = process.argv[2] ?? 'patch'
 
-  const status = (await $`git status --porcelain`.text()).trim()
-  if (status.length > 0) {
-    console.error('[release] error: working tree has uncommitted changes. aborting.')
-    process.exit(1)
+  const statusOutput = (await $`git status --porcelain`.text()).trim()
+  if (statusOutput.length > 0) {
+    const dirtyFiles = statusOutput
+      .split('\n')
+      .map((line) => line.slice(3).trim())
+      .filter((file) => file !== 'CHANGELOG.md')
+    if (dirtyFiles.length > 0) {
+      console.error(
+        `[release] error: working tree has uncommitted changes in: ${dirtyFiles.join(', ')}. please commit or stash them first.`,
+      )
+      process.exit(1)
+    }
   }
 
   const currentBranch = (await $`git branch --show-current`.text()).trim()
@@ -163,17 +164,14 @@ async function main() {
   const targetVersion = bumpVersion(baseVer, bumpArg)
   const targetTag = `v${targetVersion}`
 
-  console.log(`[release] bumping version from ${baseVer} to ${targetVersion} (${targetTag})...`)
+  // 1. 严格校验 CHANGELOG.md 是否已包含目标版本的日志记录
+  await checkChangelogEntry(targetVersion, rootDir)
 
-  // 1. 自动原子更新文件中的版本
+  console.log(`[release] target version: ${targetVersion} (${targetTag})`)
+
+  // 2. 自动原子更新各文件中的版本号
   const updatedFiles = await updateVersionInFiles(targetVersion, rootDir)
   console.log(`[release] updated version in: ${updatedFiles.join(', ')}`)
-
-  // 2. 自动归档 CHANGELOG.md
-  if (await archiveChangelog(targetVersion, rootDir)) {
-    updatedFiles.push('CHANGELOG.md')
-    console.log('[release] archived CHANGELOG.md entry')
-  }
 
   // 3. 运行代码格式化
   if (existsSync(resolve(rootDir, 'biome.json'))) {
@@ -199,7 +197,7 @@ async function main() {
   console.log('[release] enabling auto-merge for release PR...')
   await $`gh pr merge ${prUrl} --auto --squash --delete-branch`.quiet()
 
-  // 6. 等待门禁跑通
+  // 6. 等待门禁跑通并合入
   console.log('[release] waiting for CI checks to pass and merge...')
   for (let i = 0; i < 40; i++) {
     const prState = await $`gh pr view ${prUrl} --json state,mergedAt`.text()
