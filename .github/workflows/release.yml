@@ -33,16 +33,12 @@ jobs:
         include:
           - os: ubuntu-latest
             target: bun-linux-x64
-            artifact: app-linux-x64
           - os: macos-latest
             target: bun-darwin-arm64
-            artifact: app-darwin-arm64
           - os: macos-latest
             target: bun-darwin-x64
-            artifact: app-darwin-x64
           - os: windows-latest
             target: bun-windows-x64
-            artifact: app-windows-x64.exe
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -51,14 +47,24 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - name: 编译跨平台二进制
+      - name: 编译跨平台二进制并生成校验和
         shell: bash
         run: |
           mkdir -p dist
+          PKG_NAME=$(jq -r .name package.json)
+          EXT=""
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            EXT=".exe"
+          fi
+          ARTIFACT_NAME="${PKG_NAME}-${{ matrix.target }}${EXT}"
+          
           ENTRY="src/cli.ts"
           [ -f "src/index.ts" ] && ENTRY="src/index.ts"
           [ -f "scripts/standards.ts" ] && ENTRY="scripts/standards.ts"
-          bun build --compile --minify --target=${{ matrix.target }} "$ENTRY" --outfile dist/${{ matrix.artifact }}
+          
+          bun build --compile --minify --target=${{ matrix.target }} "$ENTRY" --outfile "dist/${ARTIFACT_NAME}"
+          cd dist
+          sha256sum "${ARTIFACT_NAME}" > "${ARTIFACT_NAME}.sha256"
       - name: 上传构建产物至 Release
         env:
           GH_TOKEN: ${{ github.token }}

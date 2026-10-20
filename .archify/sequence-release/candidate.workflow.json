@@ -1,0 +1,68 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "多技术栈 Release PR 自动化与全生命周期交付流水线",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "output": "release-pr-lifecycle-workflow.html"
+  },
+  "lanes": [
+    { "id": "dev", "label": "开发者工作区 (Developer Workspace)" },
+    { "id": "ci", "label": "CI 质量测试 (CI Matrix Testing)" },
+    { "id": "sec", "label": "安全与合并门禁 (Security & Gate)" },
+    { "id": "bot", "label": "发版自动化 (Release PR Automation)" },
+    { "id": "dist", "label": "制品编译与分发 (Artifact Build & Publish)" }
+  ],
+  "phases": [
+    { "id": "phase_dev", "label": "1. 本地基线与功能开发", "fromCol": 0, "toCol": 1 },
+    { "id": "phase_ci", "label": "2. 云端 CI 质量门禁", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "phase_rel", "label": "3. 声明式发版与多端分发", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": ["init_apply", "feat_pr", "ci_matrix", "gate", "merge_main", "release_pr", "merge_release", "tag_release", "dist_artifacts"],
+  "nodes": [
+    { "id": "init_apply", "lane": "dev", "col": 0, "type": "frontend", "label": "standards apply .", "sublabel": "自动探测语言与可见性", "tag": "零配置注入", "width": 140 },
+    { "id": "feat_pr", "lane": "dev", "col": 1, "type": "frontend", "label": "提交功能 PR", "sublabel": "feat: 遵循约定式提交", "width": 140 },
+    { "id": "ci_matrix", "lane": "ci", "col": 2, "type": "backend", "label": "跨平台单测与分析", "sublabel": "Linux / macOS / Windows", "width": 140 },
+    { "id": "ci_sec", "lane": "sec", "col": 2, "type": "security", "label": "Gitleaks 密钥扫描", "sublabel": "全量提交凭据审查", "width": 140 },
+    { "id": "gate", "lane": "sec", "col": 3, "type": "security", "label": "合并门禁 (Gate)", "sublabel": "Ruleset 强校验通过", "tag": "严格分支保护", "width": 140 },
+    { "id": "merge_main", "lane": "dev", "col": 4, "type": "backend", "label": "合并功能至 main", "sublabel": "触发 release push 流程", "width": 140 },
+    { "id": "release_pr", "lane": "bot", "col": 4, "type": "backend", "label": "维护 Release PR", "sublabel": "仅更新日志与版本清单", "tag": "物理隔离", "width": 140 },
+    { "id": "merge_release", "lane": "dev", "col": 5, "type": "frontend", "label": "审查并 Merge 发版", "sublabel": "人工决策正式发布", "width": 140 },
+    { "id": "tag_release", "lane": "bot", "col": 5, "type": "cloud", "label": "自动打 Tag 并发布", "sublabel": "生成 GitHub Release", "width": 140 },
+    { "id": "dist_artifacts", "lane": "dist", "col": 5, "type": "external", "label": "编译制品与分发", "sublabel": "Rust 5平台 / Bun 4平台 / uv Wheel", "tag": "公私有策略隔离", "width": 140 }
+  ],
+  "edges": [
+    { "id": "e_apply_feat", "from": "init_apply", "to": "feat_pr", "variant": "default" },
+    { "id": "e_pr_ci", "from": "feat_pr", "to": "ci_matrix", "label": "触发 CI", "variant": "emphasis" },
+    { "id": "e_pr_sec", "from": "feat_pr", "to": "ci_sec", "variant": "security" },
+    { "id": "e_ci_gate", "from": "ci_matrix", "to": "gate", "variant": "default" },
+    { "id": "e_sec_gate", "from": "ci_sec", "to": "gate", "variant": "security" },
+    { "id": "e_gate_merge", "from": "gate", "to": "merge_main", "label": "门禁放行", "variant": "emphasis" },
+    { "id": "e_merge_pr", "from": "merge_main", "to": "release_pr", "label": "自动分析扫描", "variant": "emphasis" },
+    { "id": "e_pr_approve", "from": "release_pr", "to": "merge_release", "label": "等待人工审查", "variant": "dashed" },
+    { "id": "e_approve_tag", "from": "merge_release", "to": "tag_release", "label": "触发发版", "variant": "emphasis" },
+    { "id": "e_tag_dist", "from": "tag_release", "to": "dist_artifacts", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "发布与功能物理隔离",
+      "items": [
+        "日常功能正常走 PR 与 CI 合并进 main 主干",
+        "Release PR 由机器人全自动维护，仅包含版本号与 CHANGELOG",
+        "合入 Release PR 才会打 Tag 并触发跨平台编译"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "技术栈与可见性精准适配",
+      "items": [
+        "Rust 采用 release-plz，原生同步 Cargo.lock，终结死锁",
+        "Bun 与 uv 采用 release-please 驱动",
+        "Private 仓库跳过公网注册表，严格防止私有代码外泄"
+      ]
+    }
+  ]
+}

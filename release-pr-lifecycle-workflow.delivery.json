@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "69b09462-7f51-42a9-aa32-046cc919272b",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/sony/templates/project-standards/.archify/sequence-release/candidate.workflow.json",
+  "output": "/Users/sony/templates/project-standards/release-pr-lifecycle-workflow.html",
+  "specification": {
+    "sha256": "a89cc636dcb21204f6f7cb0590809d8d300b232857f9058a4d413d0eb32fab3e",
+    "bytes": 4630
+  },
+  "artifact": {
+    "sha256": "41139e475cb6a298cbd6ad32397d151d5c436a7ad2e9332b9eb5813a21398c2b",
+    "bytes": 828142
+  }
+}

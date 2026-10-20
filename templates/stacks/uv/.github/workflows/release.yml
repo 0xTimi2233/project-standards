@@ -37,17 +37,17 @@ jobs:
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           enable-cache: true
-      - name: 构建 wheel 与 sdist
-        run: uv build
+      - name: 构建 wheel 与 sdist 并生成校验和
+        run: |
+          uv build
+          cd dist
+          sha256sum * > SHA256SUMS
       - name: 上传制品至 Release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
         run: |
           gh release upload "$TAG_NAME" dist/* --clobber
-      - name: 发布至 PyPI (Trusted Publishing OIDC)
+      - name: 原生发布至 PyPI (Trusted Publishing OIDC)
         if: ${{ vars.PYPI_ENABLE == 'true' || secrets.PYPI_API_TOKEN != '' }}
-        uses: pypa/gh-action-pypi-publish@a892a5a61159132606e93a2fa6f4358831b04d26 # v1.14.2
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          skip-existing: true
+        run: uv publish --token "${{ secrets.PYPI_API_TOKEN }}"
