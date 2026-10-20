@@ -1,0 +1,24 @@
+[workspace]
+members = ["dist:."]
+
+[package]
+name = "standards"
+description = "跨语言、跨技术栈通用的工程元数据规范与基线配置工具"
+version = "0.1.0"
+license = "MIT"
+repository = "https://github.com/0xTimi2233/project-standards"
+binaries = ["standards"]
+build-command = ["bun", "build", "--compile", "--minify", "scripts/standards.ts", "--outfile", "target/distrib/standards"]
+
+# Config for 'dist'
+[dist]
+# The preferred dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.32.0"
+# CI backends to support
+ci = "github"
+# The installers to generate for each app
+installers = []
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["aarch64-apple-darwin", "aarch64-unknown-linux-gnu", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
+# Which actions to run on pull requests
+pr-run-mode = "plan"
