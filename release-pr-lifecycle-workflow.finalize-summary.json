@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/sony/templates/project-standards/.archify/sequence-release/candidate.workflow.json",
+    "sha256": "a89cc636dcb21204f6f7cb0590809d8d300b232857f9058a4d413d0eb32fab3e",
+    "bytes": 4630
+  },
+  "artifact": {
+    "path": "/Users/sony/templates/project-standards/release-pr-lifecycle-workflow.html",
+    "sha256": "41139e475cb6a298cbd6ad32397d151d5c436a7ad2e9332b9eb5813a21398c2b",
+    "bytes": 828142
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/sony/templates/project-standards/release-pr-lifecycle-workflow.finalize.json",
+    "summaryReceipt": "/Users/sony/templates/project-standards/release-pr-lifecycle-workflow.finalize-summary.json",
+    "browserCheckReceipt": "/Users/sony/templates/project-standards/release-pr-lifecycle-workflow.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-19T09:51:46.987Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 5835,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

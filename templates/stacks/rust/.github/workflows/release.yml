@@ -61,4 +61,5 @@ jobs:
           ref: ${{ fromJson(needs.release-plz.outputs.releases)[0].tag }}
           tar: unix
           zip: windows
+          checksum: sha256
           token: ${{ secrets.GITHUB_TOKEN }}
