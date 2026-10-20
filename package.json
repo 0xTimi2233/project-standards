@@ -1,17 +1,18 @@
 {
   "name": "project-standards",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "跨技术栈通用工程元数据规范与基线配置工具",
   "type": "module",
   "bin": {
-    "standards": "./bin/standards.ts"
+    "standards": "./scripts/standards.ts"
   },
   "scripts": {
     "typecheck": "bun check",
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "bun run typecheck && biome check .",
-    "test": "bun test"
+    "test": "bun test",
+    "release": "bun scripts/release.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
