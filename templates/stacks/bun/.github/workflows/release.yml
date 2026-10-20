@@ -52,17 +52,19 @@ jobs:
         run: |
           mkdir -p dist
           PKG_NAME=$(jq -r .name package.json)
+          TARGET_RAW="${{ matrix.target }}"
+          PLATFORM="${TARGET_RAW#bun-}"
           EXT=""
-          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+          if [[ "${TARGET_RAW}" == *"windows"* ]]; then
             EXT=".exe"
           fi
-          ARTIFACT_NAME="${PKG_NAME}-${{ matrix.target }}${EXT}"
+          ARTIFACT_NAME="${PKG_NAME}-${PLATFORM}${EXT}"
           
           ENTRY="src/cli.ts"
           [ -f "src/index.ts" ] && ENTRY="src/index.ts"
           [ -f "scripts/standards.ts" ] && ENTRY="scripts/standards.ts"
           
-          bun build --compile --minify --target=${{ matrix.target }} "$ENTRY" --outfile "dist/${ARTIFACT_NAME}"
+          bun build --compile --minify --target="${TARGET_RAW}" "$ENTRY" --outfile "dist/${ARTIFACT_NAME}"
           cd dist
           sha256sum "${ARTIFACT_NAME}" > "${ARTIFACT_NAME}.sha256"
       - name: 上传构建产物至 Release

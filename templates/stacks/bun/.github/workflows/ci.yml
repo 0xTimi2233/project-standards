@@ -48,7 +48,7 @@ jobs:
       - run: bun test
 
   security:
-    name: 密钥泄露扫描
+    name: 安全审计
     permissions:
       contents: read
     uses: ./.github/workflows/security.yml

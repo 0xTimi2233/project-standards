@@ -27,8 +27,6 @@ export interface SyncOptions {
   silent?: boolean
 }
 
-export interface ApplyOptions extends InitOptions {}
-
 export interface LabelDefinition {
   name: string
   color: string
