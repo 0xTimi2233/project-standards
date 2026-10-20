@@ -1,6 +1,6 @@
 {
   "name": "project-standards",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "跨技术栈通用工程元数据规范与基线配置工具",
   "type": "module",
   "bin": {
@@ -16,8 +16,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@types/bun": "latest",
-    "smol-toml": "^1.9.1"
+    "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^7"

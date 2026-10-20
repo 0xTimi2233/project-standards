@@ -1,238 +1,80 @@
 #!/usr/bin/env bun
 import { existsSync } from 'node:fs'
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { $ } from 'bun'
-import { parse } from 'smol-toml'
 
-export async function getRemoteLatestTag(): Promise<string | null> {
-  await $`git fetch --tags origin`.quiet()
-  const raw = await $`git tag -l --sort=-v:refname`.text()
-  const tags = raw
-    .split('\n')
-    .map((t) => t.trim())
-    .filter(Boolean)
-  return tags[0] ?? null
-}
-
-export async function getLocalBaseVersion(rootDir: string): Promise<string> {
+async function resolveProjectVersion(rootDir: string): Promise<string> {
   const pkgPath = resolve(rootDir, 'package.json')
   if (existsSync(pkgPath)) {
-    const pkg = (await Bun.file(pkgPath).json()) as { version?: string }
-    if (pkg.version) return pkg.version.trim()
-  }
-
-  const distPath = resolve(rootDir, 'dist-workspace.toml')
-  if (existsSync(distPath)) {
-    const toml = parse(await readFile(distPath, 'utf-8')) as {
-      package?: { version?: string }
-    }
-    if (toml.package?.version) return toml.package.version.trim()
+    const pkg = JSON.parse(await readFile(pkgPath, 'utf-8'))
+    if (pkg.version) return String(pkg.version).trim()
   }
 
   const cargoPath = resolve(rootDir, 'Cargo.toml')
   if (existsSync(cargoPath)) {
-    const toml = parse(await readFile(cargoPath, 'utf-8')) as {
-      package?: { version?: string }
-    }
-    if (toml.package?.version) return toml.package.version.trim()
+    const content = await readFile(cargoPath, 'utf-8')
+    const match = content.match(/\[package\][\s\S]*?version\s*=\s*"([^"]+)"/)
+    if (match?.[1]) return match[1].trim()
   }
 
   const pyprojectPath = resolve(rootDir, 'pyproject.toml')
   if (existsSync(pyprojectPath)) {
-    const toml = parse(await readFile(pyprojectPath, 'utf-8')) as {
-      project?: { version?: string }
-    }
-    if (toml.project?.version) return toml.project.version.trim()
+    const content = await readFile(pyprojectPath, 'utf-8')
+    const match = content.match(/version\s*=\s*"([^"]+)"/)
+    if (match?.[1]) return match[1].trim()
   }
 
-  return '0.1.0'
-}
-
-export function parseDirtyFiles(statusOutput: string): string[] {
-  const trimmed = statusOutput.trim()
-  if (!trimmed) return []
-  return trimmed
-    .split('\n')
-    .map((line) => line.trim().split(/\s+/).slice(1).join(' '))
-    .filter((file) => file.length > 0 && file !== 'CHANGELOG.md')
-}
-
-export function bumpVersion(baseVer: string, bumpType: string): string {
-  const parts = baseVer.replace(/^v/, '').split('.').map(Number)
-  let [major = 0, minor = 1, patch = 0] = parts
-
-  if (bumpType === 'major') {
-    major += 1
-    minor = 0
-    patch = 0
-  } else if (bumpType === 'minor') {
-    minor += 1
-    patch = 0
-  } else if (bumpType === 'patch') {
-    patch += 1
-  } else if (/^\d+\.\d+\.\d+$/.test(bumpType)) {
-    return bumpType
-  } else {
-    throw new Error(
-      `[release] error: invalid bump argument '${bumpType}'. use patch, minor, major or X.Y.Z`,
-    )
-  }
-
-  return `${major}.${minor}.${patch}`
-}
-
-export function isVersionGreater(newVer: string, baseVer: string): boolean {
-  const p1 = newVer.replace(/^v/, '').split('.').map(Number)
-  const p2 = baseVer.replace(/^v/, '').split('.').map(Number)
-  for (let i = 0; i < 3; i++) {
-    const n1 = p1[i] ?? 0
-    const n2 = p2[i] ?? 0
-    if (n1 > n2) return true
-    if (n1 < n2) return false
-  }
-  return false
-}
-
-export async function updateVersionInFiles(newVersion: string, rootDir: string): Promise<string[]> {
-  const modified: string[] = []
-
-  const pkgPath = resolve(rootDir, 'package.json')
-  if (existsSync(pkgPath)) {
-    const pkg = (await Bun.file(pkgPath).json()) as { version?: string }
-    pkg.version = newVersion
-    await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf-8')
-    modified.push('package.json')
-  }
-
-  const manifestPath = resolve(rootDir, 'manifest.json')
-  if (existsSync(manifestPath)) {
-    const manifest = (await Bun.file(manifestPath).json()) as { version?: string }
-    manifest.version = newVersion
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf-8')
-    modified.push('manifest.json')
-  }
-
-  const distPath = resolve(rootDir, 'dist-workspace.toml')
-  if (existsSync(distPath)) {
-    let content = await readFile(distPath, 'utf-8')
-    content = content.replace(/(version\s*=\s*")[^"]+(")/, `$1${newVersion}$2`)
-    await writeFile(distPath, content, 'utf-8')
-    modified.push('dist-workspace.toml')
-  }
-
-  const cargoPath = resolve(rootDir, 'Cargo.toml')
-  if (existsSync(cargoPath)) {
-    let content = await readFile(cargoPath, 'utf-8')
-    content = content.replace(/(\[package\][\s\S]*?version\s*=\s*")[^"]+(")/, `$1${newVersion}$2`)
-    await writeFile(cargoPath, content, 'utf-8')
-    modified.push('Cargo.toml')
-  }
-
-  const pyprojectPath = resolve(rootDir, 'pyproject.toml')
-  if (existsSync(pyprojectPath)) {
-    let content = await readFile(pyprojectPath, 'utf-8')
-    content = content.replace(/(version\s*=\s*")[^"]+(")/, `$1${newVersion}$2`)
-    await writeFile(pyprojectPath, content, 'utf-8')
-    modified.push('pyproject.toml')
-  }
-
-  return modified
-}
-
-export async function checkChangelogEntry(version: string, rootDir: string): Promise<void> {
-  const changelogPath = resolve(rootDir, 'CHANGELOG.md')
-  if (!existsSync(changelogPath)) {
-    return
-  }
-  const content = await readFile(changelogPath, 'utf-8')
-  if (!content.includes(`## [${version}]`)) {
-    throw new Error(
-      `[release] error: CHANGELOG.md is missing an entry for [${version}]. please document release notes before releasing.`,
-    )
-  }
+  throw new Error('unable to detect version from package.json, Cargo.toml, or pyproject.toml')
 }
 
 async function main() {
   const rootDir = process.cwd()
-  const bumpArg = process.argv[2] ?? 'patch'
 
-  const rawStatus = await $`git status --porcelain`.text()
-  const dirtyFiles = parseDirtyFiles(rawStatus)
-  if (dirtyFiles.length > 0) {
-    console.error(
-      `[release] error: working tree has uncommitted changes in: ${dirtyFiles.join(', ')}. please commit or stash them first.`,
-    )
+  // 1. 确保 Git 工作区整洁
+  const status = (await $`git status --porcelain`.text()).trim()
+  if (status.length > 0) {
+    console.error('[release] error: working tree has uncommitted changes. aborting.')
     process.exit(1)
   }
 
+  // 2. 确保在默认分支
   const currentBranch = (await $`git branch --show-current`.text()).trim()
   if (currentBranch !== 'main' && currentBranch !== 'master') {
-    console.error(
-      `[release] error: must be on main branch to initiate release (current: ${currentBranch}).`,
-    )
+    console.error(`[release] error: must be on main branch to release (current: ${currentBranch}).`)
     process.exit(1)
   }
 
-  const remoteTag = await getRemoteLatestTag()
-  const localVer = await getLocalBaseVersion(rootDir)
-  const baseVer = remoteTag ? remoteTag.replace(/^v/, '') : localVer
-  const targetVersion = bumpVersion(baseVer, bumpArg)
-  const targetTag = `v${targetVersion}`
+  // 3. 自动探测版本号
+  const version = await resolveProjectVersion(rootDir)
+  const tag = `v${version}`
+  console.log(`[release] detected project version: ${version} (tag: ${tag})`)
 
-  await checkChangelogEntry(targetVersion, rootDir)
-
-  console.log(`[release] target version: ${targetVersion} (${targetTag})`)
-
-  const updatedFiles = await updateVersionInFiles(targetVersion, rootDir)
-  console.log(`[release] updated version in: ${updatedFiles.join(', ')}`)
-
-  if (existsSync(resolve(rootDir, 'biome.json'))) {
-    await $`bun run format`.quiet()
-  }
-
-  const releaseBranch = `chore/release-v${targetVersion}`
-  console.log(`[release] creating branch: ${releaseBranch}...`)
-  await $`git checkout -b ${releaseBranch}`
-  await $`git add -A`
-  await $`git commit -m "chore(release): bump version to ${targetVersion}"`
-  await $`git push -u origin ${releaseBranch}`
-
-  console.log(`[release] opening release PR...`)
-  const prTitle = `chore(release): bump version to ${targetVersion}`
-  const prBody = `Automated release PR bumping version to ${targetVersion}.`
-  const prOut = await $`gh pr create --title ${prTitle} --body ${prBody}`.text()
-  const prUrl = prOut.trim()
-  console.log(`[release] PR created: ${prUrl}`)
-
-  console.log('[release] enabling auto-merge for release PR...')
-  await $`gh pr merge ${prUrl} --auto --squash --delete-branch`.quiet()
-
-  console.log('[release] waiting for CI checks to pass and merge...')
-  for (let i = 0; i < 40; i++) {
-    const prState = await $`gh pr view ${prUrl} --json state,mergedAt`.text()
-    const stateObj = JSON.parse(prState) as { state: string; mergedAt: string | null }
-    if (stateObj.mergedAt) {
-      console.log('[release] PR successfully merged!')
-      break
-    }
-    await $`sleep 5`
-  }
-
-  await $`git checkout ${currentBranch}`
-  await $`git pull origin ${currentBranch}`
-  await $`git branch -D ${releaseBranch} 2>/dev/null || true`.quiet()
-
-  console.log(`[release] creating and pushing tag ${targetTag}...`)
-  await $`git tag -a ${targetTag} -m "Release ${targetTag}"`
-  await $`git push origin ${targetTag}`
-
-  console.log(`[release] successfully published ${targetTag}! Cloud release workflow dispatched.`)
-}
-
-if (import.meta.main) {
-  main().catch((err: unknown) => {
-    console.error(err instanceof Error ? err.message : String(err))
+  // 4. 检查 Tag 是否已经存在
+  const localTagExists = (await $`git tag -l ${tag}`.text()).trim().length > 0
+  if (localTagExists) {
+    console.error(`[release] error: tag ${tag} already exists locally. aborting.`)
     process.exit(1)
-  })
+  }
+
+  const remoteTagExists =
+    (await $`git ls-remote --tags origin refs/tags/${tag}`.text()).trim().length > 0
+  if (remoteTagExists) {
+    console.error(`[release] error: tag ${tag} already exists on remote origin. aborting.`)
+    process.exit(1)
+  }
+
+  // 5. 创建并推送 Tag
+  console.log(`[release] creating annotated tag: ${tag}...`)
+  await $`git tag -a ${tag} -m "Release ${tag}"`
+
+  console.log(`[release] pushing tag ${tag} to origin...`)
+  await $`git push origin ${tag}`
+
+  console.log(`[release] successfully published tag ${tag}! Cloud release workflow triggered.`)
 }
+
+main().catch((err: unknown) => {
+  console.error('[release] fatal:', err instanceof Error ? err.message : String(err))
+  process.exit(1)
+})
