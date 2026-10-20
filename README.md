@@ -16,7 +16,7 @@
 
 ## 背景
 
-在多语言与多仓库协作中，统一分支保护、标签体系、提交规范以及自动化依赖治理是保障工程质量的底线。本项目提供面向开发者与智能体的一键式基线同步能力，彻底消除跨项目元数据漂移。
+在多语言与多仓库协作中，统一分支保护、标签体系、提交规范以及自动化依赖治理是保障工程质量的底线。本项目提供面向开发者与 Agent 的一键式基线同步能力，彻底消除跨项目元数据漂移。
 
 ## 前置要求
 
@@ -40,7 +40,7 @@ standards apply .
 
 ## 核心命令
 
-命令行工具面向自动化与智能体设计，输出收敛为高信噪比纯文本格式：
+命令行工具面向自动化与 Agent 设计，输出收敛为高信噪比纯文本格式：
 
 | 命令 | 参数 | 职责说明 |
 | :--- | :--- | :--- |
@@ -65,9 +65,9 @@ standards apply .
 
 ### GitHub 协作模板
 
-- 全局配置：[.github/ISSUE_TEMPLATE/config.yaml](.github/ISSUE_TEMPLATE/config.yaml)，禁用空白 Issue 提交
+- 全局配置：[.github/ISSUE_TEMPLATE/config.yaml](.github/ISSUE_TEMPLATE/config.yaml)，禁用空白 Issue 提交并引导至 Discussions
 - 缺陷报告表单：[.github/ISSUE_TEMPLATE/bug_report.yaml](.github/ISSUE_TEMPLATE/bug_report.yaml)
-- 功能支持表单：[.github/ISSUE_TEMPLATE/feature_support.yaml](.github/ISSUE_TEMPLATE/feature_support.yaml)
+- 功能需求表单：[.github/ISSUE_TEMPLATE/feature_request.yaml](.github/ISSUE_TEMPLATE/feature_request.yaml)
 - 合并请求模板：[.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)
 
 ### 标准标签集合
@@ -79,7 +79,7 @@ standards apply .
 | :--- | :--- |
 | `type/bug` | 系统缺陷、逻辑错误或运行异常 |
 | `type/feat` | 新增功能特性与能力支持 |
-| `status/ready-for-agent` | 上下文与验收标准明确，智能体可直接领取实现 |
+| `status/ready-for-agent` | 上下文与验收标准明确，Agent 可直接领取实现 |
 | `status/needs-human` | 执行受阻挂起，需要人类进行决策、授权或方向确认 |
 | `status/wontfix` | 不予支持、不予采纳或超出当前项目规划边界 |
 

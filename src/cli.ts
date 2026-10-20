@@ -1,11 +1,11 @@
-import { initLocalBaseline } from "./core/init.ts";
 import {
+  resolveRepoSlug,
+  syncGitHub,
   syncLabels,
   syncRuleset,
   syncSettings,
-  syncGitHub,
-  resolveRepoSlug,
-} from "./core/github.ts";
+} from "@/core/github.ts";
+import { initLocalBaseline } from "@/core/init.ts";
 
 function printHelp(): void {
   console.log(`Usage: standards <command> [arguments]
@@ -27,7 +27,12 @@ Options:
 export async function runCli(args: string[]): Promise<void> {
   const [command, target] = args;
 
-  if (!command || command === "-h" || command === "--help" || command === "help") {
+  if (
+    !command ||
+    command === "-h" ||
+    command === "--help" ||
+    command === "help"
+  ) {
     printHelp();
     return;
   }
@@ -35,7 +40,9 @@ export async function runCli(args: string[]): Promise<void> {
   switch (command) {
     case "init": {
       if (!target) {
-        throw new Error("missing target directory. usage: standards init <target>");
+        throw new Error(
+          "missing target directory. usage: standards init <target>",
+        );
       }
       await initLocalBaseline(target);
       break;
@@ -43,7 +50,9 @@ export async function runCli(args: string[]): Promise<void> {
 
     case "sync-labels": {
       if (!target) {
-        throw new Error("missing repo. usage: standards sync-labels <owner/repo>");
+        throw new Error(
+          "missing repo. usage: standards sync-labels <owner/repo>",
+        );
       }
       await syncLabels(target);
       break;
@@ -51,7 +60,9 @@ export async function runCli(args: string[]): Promise<void> {
 
     case "sync-ruleset": {
       if (!target) {
-        throw new Error("missing repo. usage: standards sync-ruleset <owner/repo>");
+        throw new Error(
+          "missing repo. usage: standards sync-ruleset <owner/repo>",
+        );
       }
       await syncRuleset(target);
       break;
@@ -59,7 +70,9 @@ export async function runCli(args: string[]): Promise<void> {
 
     case "sync-settings": {
       if (!target) {
-        throw new Error("missing repo. usage: standards sync-settings <owner/repo>");
+        throw new Error(
+          "missing repo. usage: standards sync-settings <owner/repo>",
+        );
       }
       await syncSettings(target);
       break;
