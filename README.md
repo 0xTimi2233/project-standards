@@ -29,7 +29,7 @@
 
 ```bash
 # 全流程应用（初始化本地文件 + 自动识别关联远端并同步 GitHub 配置）
-~/templates/project-standards/bin/standards.ts apply .
+~/templates/project-standards/scripts/standards.ts apply .
 ```
 
 若已将本工具目录加入 `PATH` 或执行了全局链接，可直接调用 `standards`：
@@ -97,6 +97,11 @@ standards apply .
 
 定义文件：[CONTRIBUTING.md](CONTRIBUTING.md)  
 定义跨语言通用的协作工作流、约定式提交、质量门禁与完成定义。
+
+### 自动化发布脚本
+
+定义文件：[scripts/release.ts](scripts/release.ts)  
+通用跨技术栈版本发布脚本，自动探测项目配置中的版本号，校验工作区状态并安全创建与推送标准 Git Tag。
 
 ### 安全策略
 

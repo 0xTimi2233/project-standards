@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "project-standards-manifest",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "entries": [
     {
       "src": ".gitmessage",
@@ -46,6 +46,11 @@
     {
       "src": ".markdownlint-cli2.jsonc",
       "dest": ".markdownlint-cli2.jsonc",
+      "strategy": "create-only"
+    },
+    {
+      "src": "scripts/release.ts",
+      "dest": "scripts/release.ts",
       "strategy": "create-only"
     },
     {
